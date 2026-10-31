@@ -1,0 +1,21 @@
+using Gtk 4.0;
+using Adw 1;
+translation-domain "io.github.orlowski_dev.CertScope";
+
+template $MainWindow: Adw.ApplicationWindow {
+  content: Adw.ToolbarView {
+    content: Adw.StatusPage {
+      description: _("Sample text");
+      icon-name: "certificate-symbolic";
+      title: "CertScope";
+    };
+
+    [top]
+    Adw.HeaderBar {}
+  };
+
+  default-height: 800;
+  default-width: 1100;
+  height-request: 800;
+  width-request: 1100;
+}

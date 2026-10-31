@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
     <!-- Linux deployment -->
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
@@ -18,9 +19,17 @@
     <PackageReference Include="GirCore.Gtk-4.0" Version="0.8.1" />
   </ItemGroup>
 
-  <!-- GResource dependencies -->
+  <!-- Blueprint configuration -->
+  <PropertyGroup>
+    <BlueprintSourceDir>$(MSBuildProjectDirectory)/Resources</BlueprintSourceDir>
+    <BlueprintOutputDir>$(IntermediateOutputPath)blueprint/</BlueprintOutputDir>
+  </PropertyGroup>
+
   <ItemGroup>
-    <GResourceInput Include="Resources/**/*.ui" />
+    <BlueprintInput Include="Resources/**/*.blp">
+      <OutputFile>$(BlueprintOutputDir)%(RecursiveDir)%(Filename).ui</OutputFile>
+    </BlueprintInput>
+
     <GResourceInput Include="Resources/**/*.css" />
     <GResourceInput Include="Resources/**/*.svg" />
     <GResourceInput Include="Resources/**/*.png" />
@@ -33,26 +42,31 @@
     <GResourceManifest>$(GResourceSourceDir)/io.github.orlowski_dev.CertScope.gresource.xml</GResourceManifest>
   </PropertyGroup>
 
-  <!-- GResource dependencies -->
-  <ItemGroup>
-    <GResourceInput Include="Resources/**/*.ui" />
-    <GResourceInput Include="Resources/**/*.css" />
-    <GResourceInput Include="Resources/**/*.svg" />
-    <GResourceInput Include="Resources/**/*.png" />
-  </ItemGroup>
+  <!-- Compile Blueprint files incrementally -->
+  <Target
+    Name="CompileBlueprints"
+    Inputs="%(BlueprintInput.FullPath)"
+    Outputs="%(BlueprintInput.OutputFile)"
+  >
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('%(BlueprintInput.OutputFile)'))" />
 
-  <!-- Compile and register GResource -->
+    <Exec Command="blueprint-compiler compile --output &quot;%(BlueprintInput.OutputFile)&quot; &quot;%(BlueprintInput.FullPath)&quot;" />
+  </Target>
+
+  <!-- Compile GResource after Blueprint -->
   <Target
     Name="CompileGResources"
     BeforeTargets="AssignTargetPaths"
-    Inputs="$(GResourceManifest);@(GResourceInput)"
+    DependsOnTargets="CompileBlueprints"
+    Inputs="$(GResourceManifest);@(GResourceInput);@(BlueprintInput);@(BlueprintInput->'%(OutputFile)')"
     Outputs="$(IntermediateOutputPath)$(ResourcesFileName)"
   >
     <MakeDir Directories="$(IntermediateOutputPath)" />
 
-    <Exec Command="glib-compile-resources --sourcedir=&quot;$(GResourceSourceDir)&quot; --target=&quot;$(IntermediateOutputPath)$(ResourcesFileName)&quot; &quot;$(GResourceManifest)&quot;" />
+    <Exec Command="glib-compile-resources --sourcedir=&quot;$(BlueprintOutputDir)&quot; --sourcedir=&quot;$(GResourceSourceDir)&quot; --target=&quot;$(IntermediateOutputPath)$(ResourcesFileName)&quot; &quot;$(GResourceManifest)&quot;" />
   </Target>
 
+  <!-- Register compiled GResource -->
   <Target
     Name="RegisterGResources"
     BeforeTargets="AssignTargetPaths"
