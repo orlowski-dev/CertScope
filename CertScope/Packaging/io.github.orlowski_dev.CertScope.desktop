@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=MyNetGtkApp
+GenericName=My Net Gtk App
+GenericName[pl]=Moja aplikacja .Net Gtk
+Comment=Sample application
+Comment[pl]=Przykładowa aplikacja
+Exec=MyNetGtkApp.Cli
+Icon=io.github.example.MyNetGtkApp
+Terminal=false
+Categories=Utility;
+StartupNotify=true
+StartupWMClass=io.github.example.MyNetGtkApp

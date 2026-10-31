@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface domain="io.github.orlowski_dev.CertScope">
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+
+  <object class="AdwToolbarView" id="mainContent">
+    <child type="top">
+      <object class="AdwHeaderBar"/>
+    </child>
+
+    <property name="content">
+      <object class="AdwStatusPage">
+        <property name="title">CertScope</property>
+        <property name="description" translatable="yes">Sample application</property>
+      </object>
+    </property>
+  </object>
+</interface>

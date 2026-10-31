@@ -1,0 +1,112 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <!-- Linux deployment -->
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GirCore.Adw-1" Version="0.8.1" />
+    <PackageReference Include="GirCore.Gtk-4.0" Version="0.8.1" />
+  </ItemGroup>
+
+  <!-- GResource dependencies -->
+  <ItemGroup>
+    <GResourceInput Include="Resources/**/*.ui" />
+    <GResourceInput Include="Resources/**/*.css" />
+    <GResourceInput Include="Resources/**/*.svg" />
+    <GResourceInput Include="Resources/**/*.png" />
+  </ItemGroup>
+
+  <!-- GResource configuration -->
+  <PropertyGroup>
+    <ResourcesFileName>io.github.orlowski_dev.CertScope.gresource</ResourcesFileName>
+    <GResourceSourceDir>$(MSBuildProjectDirectory)/Resources</GResourceSourceDir>
+    <GResourceManifest>$(GResourceSourceDir)/io.github.orlowski_dev.CertScope.gresource.xml</GResourceManifest>
+  </PropertyGroup>
+
+  <!-- GResource dependencies -->
+  <ItemGroup>
+    <GResourceInput Include="Resources/**/*.ui" />
+    <GResourceInput Include="Resources/**/*.css" />
+    <GResourceInput Include="Resources/**/*.svg" />
+    <GResourceInput Include="Resources/**/*.png" />
+  </ItemGroup>
+
+  <!-- Compile and register GResource -->
+  <Target
+    Name="CompileGResources"
+    BeforeTargets="AssignTargetPaths"
+    Inputs="$(GResourceManifest);@(GResourceInput)"
+    Outputs="$(IntermediateOutputPath)$(ResourcesFileName)"
+  >
+    <MakeDir Directories="$(IntermediateOutputPath)" />
+
+    <Exec Command="glib-compile-resources --sourcedir=&quot;$(GResourceSourceDir)&quot; --target=&quot;$(IntermediateOutputPath)$(ResourcesFileName)&quot; &quot;$(GResourceManifest)&quot;" />
+  </Target>
+
+  <Target
+    Name="RegisterGResources"
+    BeforeTargets="AssignTargetPaths"
+    DependsOnTargets="CompileGResources"
+  >
+    <ItemGroup>
+      <None Include="$(IntermediateOutputPath)$(ResourcesFileName)">
+        <TargetPath>$(ResourcesFileName)</TargetPath>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </None>
+    </ItemGroup>
+  </Target>
+
+  <!-- Gettext configuration -->
+  <PropertyGroup>
+    <TranslationDomain>io.github.orlowski_dev.CertScope</TranslationDomain>
+    <TranslationsSourceDir>$(MSBuildProjectDirectory)/po</TranslationsSourceDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Source translation files must not be copied to output -->
+    <None Remove="po/**/*.po;po/**/*.pot" />
+
+    <!-- Translation sources and generated outputs -->
+    <Translation Include="$(TranslationsSourceDir)/*.po">
+      <MoOutput>$(BaseIntermediateOutputPath)$(Configuration)/$(TargetFramework)/$(RuntimeIdentifier)/locale/%(Filename)/LC_MESSAGES/$(TranslationDomain).mo</MoOutput>
+      <TargetPath>locale/%(Filename)/LC_MESSAGES/$(TranslationDomain).mo</TargetPath>
+    </Translation>
+  </ItemGroup>
+
+  <!-- Compile translations incrementally -->
+  <Target
+    Name="CompileTranslations"
+    Inputs="@(Translation)"
+    Outputs="@(Translation->'%(MoOutput)')"
+  >
+    <MakeDir Directories="$([System.IO.Path]::GetDirectoryName('%(Translation.MoOutput)'))" />
+
+    <Exec Command="msgfmt --check --output-file=&quot;%(Translation.MoOutput)&quot; &quot;%(Translation.FullPath)&quot;" />
+  </Target>
+
+  <!-- Register generated MO files -->
+  <Target
+    Name="RegisterTranslations"
+    BeforeTargets="AssignTargetPaths"
+    DependsOnTargets="CompileTranslations"
+  >
+    <ItemGroup>
+      <None
+        Include="@(Translation->'%(MoOutput)')"
+        CopyToOutputDirectory="PreserveNewest"
+        CopyToPublishDirectory="PreserveNewest"
+      />
+    </ItemGroup>
+  </Target>
+</Project>
