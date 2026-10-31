@@ -6,6 +6,13 @@
 # dotenv files
 .env
 
+# flatpak build
+.flatpak-build/
+.flatpak-builder/
+.flatpak-repo/
+
+.vscode/
+
 # User-specific files
 *.rsuser
 *.suo

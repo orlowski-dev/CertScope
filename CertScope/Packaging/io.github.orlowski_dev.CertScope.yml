@@ -1,0 +1,49 @@
+id: io.github.orlowski_dev.CertScope
+
+runtime: org.gnome.Platform
+runtime-version: "50"
+sdk: org.gnome.Sdk
+
+command: CertScope
+
+finish-args:
+  # Display
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --device=dri
+
+  # TLS diagnostics and network access
+  - --share=network
+
+modules:
+  - name: certscope
+    buildsystem: simple
+
+    build-commands:
+      # Install published .NET application
+      - mkdir -p /app/bin
+      - cp -a . /app/bin/
+      - rm -rf /app/bin/packaging
+      - chmod +x /app/bin/CertScope
+
+      # Install desktop entry
+      - install -Dm644 packaging/io.github.orlowski_dev.CertScope.desktop /app/share/applications/io.github.orlowski_dev.CertScope.desktop
+
+      # Install application icon
+      - install -Dm644 packaging/io.github.orlowski_dev.CertScope.svg /app/share/icons/hicolor/scalable/apps/io.github.orlowski_dev.CertScope.svg
+
+    sources:
+      # Precompiled .NET application
+      - type: dir
+        path: ../bin/Release/net10.0/linux-x64/publish
+
+      # Desktop entry
+      - type: file
+        path: io.github.orlowski_dev.CertScope.desktop
+        dest: packaging
+
+      # Application icon
+      - type: file
+        path: ../Resources/icons/hicolor/scalable/apps/io.github.orlowski_dev.CertScope.svg
+        dest: packaging
