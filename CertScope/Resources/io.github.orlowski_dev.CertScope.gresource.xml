@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <gresources>
   <gresource prefix="/io/github/orlowski_dev/CertScope">
-    <file>ui/main-window.ui</file>
+    <file preprocess="xml-stripblanks">ui/main-window.ui</file>
+    <file preprocess="xml-stripblanks"
+      >icons/hicolor/scalable/apps/io.github.orlowski_dev.CertScope.svg</file>
+    <file preprocess="xml-stripblanks">icons/scalable/actions/certificate-symbolic.svg</file>
   </gresource>
 </gresources>

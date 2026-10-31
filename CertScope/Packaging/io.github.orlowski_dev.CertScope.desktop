@@ -1,13 +1,14 @@
 [Desktop Entry]
 Type=Application
-Name=MyNetGtkApp
-GenericName=My Net Gtk App
-GenericName[pl]=Moja aplikacja .Net Gtk
-Comment=Sample application
-Comment[pl]=Przykładowa aplikacja
-Exec=MyNetGtkApp.Cli
-Icon=io.github.example.MyNetGtkApp
+Name=CertScope
+GenericName=Certificate Manager
+GenericName[pl]=Menedżer certyfikatów
+Comment=Manage and inspect X.509 certificates and diagnose TLS connections
+Comment[pl]=Zarządzanie i analiza certyfikatów X.509 oraz diagnostyka połączeń TLS
+Exec=CertScope
+Icon=io.github.orlowski_dev.CertScope
 Terminal=false
-Categories=Utility;
 StartupNotify=true
-StartupWMClass=io.github.example.MyNetGtkApp
+Categories=System;Security;GTK;GNOME;
+Keywords=Certificate;X509;PKI;TLS;SSL;
+Keywords[pl]=Certyfikat;Certyfikaty;PKI;TLS;SSL;

@@ -1,3 +1,7 @@
+// CertScope
+// Copyright (C) 2026-2027 Patryk Orłowski <orlowski.patryk.dev@proton.me>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 namespace CertScope;
 
 public static class Shared

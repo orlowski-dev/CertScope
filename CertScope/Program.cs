@@ -1,5 +1,10 @@
-﻿using CertScope;
+﻿// CertScope
+// Copyright (C) 2026-2027 Patryk Orłowski <orlowski.patryk.dev@proton.me>
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using CertScope;
 using CertScope.Localization;
+using CertScope.Views;
 
 // Initialize native bindings
 Gio.Module.Initialize();
@@ -23,16 +28,8 @@ var application = Adw.Application.New(Shared.ApplicationId, Gio.ApplicationFlags
 application.OnActivate += (sender, args) =>
 {
     var app = (Adw.Application)sender;
-    var builder = Gtk.Builder.NewFromResource($"{Shared.ResourcesPrefix}/ui/main-window.ui");
-
-    var content =
-        builder.GetObject("mainContent") as Gtk.Widget
-        ?? throw new InvalidOperationException("'mainContent' widget not found.");
-
-    var window = Adw.ApplicationWindow.New(app);
-    window.SetTitle("MyNetGtkApp");
-    window.SetDefaultSize(1000, 700);
-    window.SetContent(content);
+    var window = MainWindow.NewWithProperties([]);
+    window.SetApplication(app);
     window.Present();
 };
 
